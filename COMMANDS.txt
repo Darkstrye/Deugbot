@@ -15,9 +15,8 @@ Example Usage:
   User: commands
   Bot: 📋 Available Commands:
        1️⃣ CHECK INVENTORY
-       2️⃣ ADD CRATES (Primary)
-       3️⃣ ADD BEERS (Alternative)
-       4️⃣ SUBTRACT BEERS
+       2️⃣ ADD CRATES
+       3️⃣ SUBTRACT CRATES
        ...
 
 
@@ -40,9 +39,9 @@ Response Format:
   Shows current crate count with beer emoji indicator
 
 
-COMMAND 2: ADD CRATES TO INVENTORY (PRIMARY)
----------------------------------------------
-Function: Adds full crates directly to inventory. This is the preferred method.
+COMMAND 2: ADD CRATES TO INVENTORY
+-----------------------------------
+Function: Adds full crates directly to inventory.
 
 Accepted Phrases:
   - "add X crates" (e.g., "add 1 crate", "add 5 crates")
@@ -66,79 +65,43 @@ Note:
   - Standard crate size: 24 beers per crate
 
 
-COMMAND 3: ADD BEERS TO INVENTORY (ALTERNATIVE)
--------------------------------------------------
-Function: Adds beers to inventory. Only full crates are added (24 beers = 1 crate).
-         Partial crates are not added to inventory. Use "add crates" for direct control.
+COMMAND 3: SUBTRACT CRATES FROM INVENTORY
+------------------------------------------
+Function: Removes full crates from inventory.
 
 Accepted Phrases:
-  - "add X beers" (e.g., "add 24 beers", "add 48 beers")
-  - "add X beers to inventory"
-  - "added X beers to inventory"
-  - "stock X beers"
-  - "restock X beers"
-  - "received X beers"
+  - "subtract X crates"
+  - "removed X crates"
+  - "take X crates"
+  - "remove X crates"
+  - "subtract X crates from inventory"
+  - "removed X crates from inventory"
 
 Example Usage:
-  User: add 24 beers
-  Bot: Added 1 crate to inventory. Total: 51 crates.
+  User: subtract 2 crates
+  Bot: Removed 2 crates from inventory. 48 crates remaining.
 
-  User: add 48 beers
-  Bot: Added 2 crates to inventory. Total: 52 crates.
+  User: remove 1 crate
+  Bot: Removed 1 crate from inventory. 49 crates remaining.
 
-  User: add 10 beers
-  Bot: Added 10 beers. No full crates to add. Total: 50 crates.
-
-  User: add 30 beers
-  Bot: Added 30 beers. Only 1 full crate added to inventory. 6 beers not added. Total: 51 crates.
+  User: subtract 50 crates
+  Bot: Removed 50 crates from inventory. Inventory is now empty.
 
 Note: 
   - X must be a positive number
-  - Only full crates (multiples of 24) are added to inventory
-  - Partial beers are not stored in inventory
-  - Standard crate size: 24 beers per crate
-  - Recommended: Use "add X crates" instead for direct control
-
-
-COMMAND 4: SUBTRACT BEERS (When Added to Fridge)
---------------------------------------------------
-Function: Removes beers from inventory when beers are added to the fridge.
-         Breaks crates if needed to subtract the exact amount.
-
-Accepted Phrases:
-  - "added X beers" (e.g., "added 4 beers", "added 24 beers")
-  - "added X beers to fridge"
-  - "add X beers to fridge"
-  - "subtract X beers"
-  - "removed X beers"
-  - "take X beers"
-
-Example Usage:
-  User: added 24 beers
-  Bot: Removed 24 beers. 49 crates remaining.
-
-  User: added 4 beers
-  Bot: Removed 4 beers from 1 crate. 49 crates remaining.
-
-  User: added 50 beers
-  Bot: Removed 50 beers from 2 crates. 48 crates remaining.
-
-Note: 
-  - X must be a positive number
-  - Beers are subtracted from total inventory (crates are broken if needed)
-  - Standard crate size: 24 beers per crate
+  - Removes full crates directly
   - Inventory cannot go below 0 crates
-  - Note: "added X beers" (without "to inventory") subtracts from inventory
-           "added X crates" adds to inventory
+  - Standard crate size: 24 beers per crate
 
 
 UNKNOWN COMMANDS
 ----------------
 If the bot doesn't recognize a command, it will respond with:
   "🤔 I didn't understand that command. Try:
+   • 'commands' - See all available commands
    • 'check inventory' - See current stock
    • 'add X crates' - Add X crates to inventory
-   • 'added X beers' - Remove X beers when added to fridge"
+   • 'subtract X crates' - Remove X crates from inventory"
 
 
 TECHNICAL DETAILS
@@ -146,11 +109,7 @@ TECHNICAL DETAILS
 - All commands are case-insensitive
 - The bot uses natural language processing
 - Commands work with partial phrases (e.g., "how many" triggers inventory check)
-- Inventory is stored in inventory.json file (crates only, no partial beers)
+- Inventory is stored in inventory.json file (crates only)
 - Default starting inventory: 50 crates (configurable in .env file)
-- Recommended: Use "add X crates" for adding inventory (primary method)
-- Alternative: "add X beers" converts to crates (only full crates added)
-- Distinction between ADD and SUBTRACT:
-  * "add X crates" or "added X crates to inventory" = ADD to inventory
-  * "add X beers" or "added X beers to inventory" = ADD to inventory (converts to crates)
-  * "added X beers" (to fridge) or "removed X beers" = SUBTRACT from inventory
+- All operations work with full crates only
+- Standard crate size: 24 beers per crate

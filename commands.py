@@ -1,6 +1,6 @@
 import re
 from typing import Optional
-from inventory import get_inventory, subtract_beers, add_beers, add_crates
+from inventory import get_inventory, subtract_crates, add_crates
 
 
 def parse_command(message: str) -> Optional[str]:
@@ -27,23 +27,19 @@ def parse_command(message: str) -> Optional[str]:
    • "beers left"
    • "beer count"
 
-2️⃣ ADD CRATES (Primary)
+2️⃣ ADD CRATES
    • "add X crates" (e.g., "add 2 crates")
    • "added X crates"
    • "stock X crates"
    • "restock X crates"
 
-3️⃣ ADD BEERS (Alternative)
-   • "add X beers" (converts to crates)
-   • "added X beers to inventory"
+3️⃣ SUBTRACT CRATES
+   • "subtract X crates"
+   • "removed X crates"
+   • "take X crates"
+   • "remove X crates"
 
-4️⃣ SUBTRACT BEERS
-   • "added X beers" (when added to fridge)
-   • "added X beers to fridge"
-   • "subtract X beers"
-   • "removed X beers"
-
-💡 Tip: Use "add X crates" for direct control!"""
+💡 All operations work with full crates!"""
     
     # Check inventory commands
     if any(keyword in message_lower for keyword in ["check inventory", "how many", "inventory", "beers left", "beer count"]):
@@ -53,7 +49,7 @@ def parse_command(message: str) -> Optional[str]:
         else:
             return f"🍺 Current inventory: Empty"
     
-    # Add crates to inventory commands (primary)
+    # Add crates to inventory commands
     add_crate_patterns = [
         r"add\s+(\d+)\s+crates?",
         r"added\s+(\d+)\s+crates?",
@@ -74,48 +70,28 @@ def parse_command(message: str) -> Optional[str]:
             result = add_crates(crates)
             return result["message"]
     
-    # Add beers to inventory commands (alternative - converts to crates)
-    add_beer_patterns = [
-        r"add\s+(\d+)\s+beers?",
-        r"add\s+(\d+)\s+beers?\s+to\s+inventory",
-        r"added\s+(\d+)\s+beers?\s+to\s+inventory",
-        r"stock\s+(\d+)\s+beers?",
-        r"restock\s+(\d+)\s+beers?",
-        r"received\s+(\d+)\s+beers?",
-    ]
-    
-    for pattern in add_beer_patterns:
-        match = re.search(pattern, message_lower)
-        if match:
-            amount = int(match.group(1))
-            if amount <= 0:
-                return "❌ Please specify a positive number of beers."
-            
-            result = add_beers(amount)
-            return result["message"]
-    
-    # Subtract beers from inventory commands (when added to fridge)
+    # Subtract crates from inventory commands
     subtract_patterns = [
-        r"added\s+(\d+)\s+beers?",
-        r"added\s+(\d+)\s+beers?\s+to\s+fridge",
-        r"add\s+(\d+)\s+beers?\s+to\s+fridge",
-        r"subtract\s+(\d+)\s+beers?",
-        r"removed\s+(\d+)\s+beers?",
-        r"take\s+(\d+)\s+beers?",
+        r"subtract\s+(\d+)\s+crates?",
+        r"removed\s+(\d+)\s+crates?",
+        r"take\s+(\d+)\s+crates?",
+        r"remove\s+(\d+)\s+crates?",
+        r"subtract\s+(\d+)\s+crates?\s+from\s+inventory",
+        r"removed\s+(\d+)\s+crates?\s+from\s+inventory",
     ]
     
     for pattern in subtract_patterns:
         match = re.search(pattern, message_lower)
         if match:
-            amount = int(match.group(1))
-            if amount <= 0:
-                return "❌ Please specify a positive number of beers."
+            crates = int(match.group(1))
+            if crates <= 0:
+                return "❌ Please specify a positive number of crates."
             
-            result = subtract_beers(amount)
+            result = subtract_crates(crates)
             return result["message"]
     
     # Unknown command
-    return "🤔 I didn't understand that command. Try:\n• 'commands' - See all available commands\n• 'check inventory' - See current stock\n• 'add X crates' - Add X crates to inventory\n• 'added X beers' - Remove X beers when added to fridge"
+    return "🤔 I didn't understand that command. Try:\n• 'commands' - See all available commands\n• 'check inventory' - See current stock\n• 'add X crates' - Add X crates to inventory\n• 'subtract X crates' - Remove X crates from inventory"
 
 
 def handle_message(message: str) -> str:
