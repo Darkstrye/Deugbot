@@ -16,6 +16,35 @@ def parse_command(message: str) -> Optional[str]:
     # Normalize message to lowercase for easier matching
     message_lower = message.lower().strip()
     
+    # Commands list command
+    if message_lower in ["commands", "help", "list commands", "what can you do"]:
+        return """📋 Available Commands:
+
+1️⃣ CHECK INVENTORY
+   • "check inventory"
+   • "how many"
+   • "inventory"
+   • "beers left"
+   • "beer count"
+
+2️⃣ ADD CRATES (Primary)
+   • "add X crates" (e.g., "add 2 crates")
+   • "added X crates"
+   • "stock X crates"
+   • "restock X crates"
+
+3️⃣ ADD BEERS (Alternative)
+   • "add X beers" (converts to crates)
+   • "added X beers to inventory"
+
+4️⃣ SUBTRACT BEERS
+   • "added X beers" (when added to fridge)
+   • "added X beers to fridge"
+   • "subtract X beers"
+   • "removed X beers"
+
+💡 Tip: Use "add X crates" for direct control!"""
+    
     # Check inventory commands
     if any(keyword in message_lower for keyword in ["check inventory", "how many", "inventory", "beers left", "beer count"]):
         crates = get_inventory()
@@ -86,7 +115,7 @@ def parse_command(message: str) -> Optional[str]:
             return result["message"]
     
     # Unknown command
-    return "🤔 I didn't understand that command. Try:\n• 'check inventory' - See current stock\n• 'add X crates' - Add X crates to inventory\n• 'added X beers' - Remove X beers when added to fridge"
+    return "🤔 I didn't understand that command. Try:\n• 'commands' - See all available commands\n• 'check inventory' - See current stock\n• 'add X crates' - Add X crates to inventory\n• 'added X beers' - Remove X beers when added to fridge"
 
 
 def handle_message(message: str) -> str:

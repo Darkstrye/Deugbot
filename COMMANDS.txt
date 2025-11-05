@@ -1,6 +1,26 @@
 WhatsApp Beer Inventory Bot - Commands List
 =============================================
 
+COMMAND 0: LIST COMMANDS
+------------------------
+Function: Displays a list of all available commands
+
+Accepted Phrases:
+  - "commands"
+  - "help"
+  - "list commands"
+  - "what can you do"
+
+Example Usage:
+  User: commands
+  Bot: 📋 Available Commands:
+       1️⃣ CHECK INVENTORY
+       2️⃣ ADD CRATES (Primary)
+       3️⃣ ADD BEERS (Alternative)
+       4️⃣ SUBTRACT BEERS
+       ...
+
+
 COMMAND 1: CHECK INVENTORY
 ---------------------------
 Function: Displays the current number of beer crates in inventory
