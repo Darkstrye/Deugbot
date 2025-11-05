@@ -25,7 +25,12 @@ def load_inventory() -> Dict:
     
     try:
         with open(INVENTORY_FILE, 'r') as f:
-            return json.load(f)
+            inventory = json.load(f)
+        # Remove partial_beers if it exists (backwards compatibility)
+        if "partial_beers" in inventory:
+            del inventory["partial_beers"]
+            save_inventory(inventory)
+        return inventory
     except (json.JSONDecodeError, IOError) as e:
         # If file is corrupted, reinitialize
         initial_inventory = {
@@ -51,7 +56,7 @@ def get_inventory() -> int:
 
 def add_beers(amount: int) -> Dict[str, any]:
     """
-    Add beers to inventory. Converts individual beers to crates.
+    Add beers to inventory. Only adds full crates (24 beers = 1 crate).
     
     Args:
         amount: Number of individual beers to add
@@ -62,26 +67,35 @@ def add_beers(amount: int) -> Dict[str, any]:
     inventory = load_inventory()
     current_crates = inventory.get("crates", DEFAULT_CRATES)
     
-    # Convert beers to crates (round up to account for partial crates)
-    crates_to_add = (amount + BEERS_PER_CRATE - 1) // BEERS_PER_CRATE
+    # Only add full crates (floor division)
+    crates_to_add = amount // BEERS_PER_CRATE
+    remaining_beers = amount % BEERS_PER_CRATE
     
     new_crates = current_crates + crates_to_add
     
     inventory["crates"] = new_crates
     save_inventory(inventory)
     
+    # Format message nicely
+    if crates_to_add > 0 and remaining_beers > 0:
+        message = f"Added {amount} beers. Only {crates_to_add} full crate{'s' if crates_to_add > 1 else ''} added to inventory. {remaining_beers} beer{'s' if remaining_beers > 1 else ''} not added. Total: {new_crates} crate{'s' if new_crates != 1 else ''}."
+    elif crates_to_add > 0:
+        message = f"Added {crates_to_add} crate{'s' if crates_to_add > 1 else ''} to inventory. Total: {new_crates} crate{'s' if new_crates != 1 else ''}."
+    else:
+        message = f"Added {amount} beers. No full crates to add. Total: {new_crates} crate{'s' if new_crates != 1 else ''}."
+    
     return {
         "success": True,
         "crates": new_crates,
         "beers_added": amount,
         "crates_added": crates_to_add,
-        "message": f"Added {amount} beers ({crates_to_add} crate(s)) to inventory. {new_crates} crate(s) total."
+        "message": message
     }
 
 
 def subtract_beers(amount: int) -> Dict[str, any]:
     """
-    Subtract beers from inventory. Converts individual beers to crates.
+    Subtract beers from inventory. Breaks crates if needed.
     
     Args:
         amount: Number of individual beers to subtract
@@ -92,20 +106,35 @@ def subtract_beers(amount: int) -> Dict[str, any]:
     inventory = load_inventory()
     current_crates = inventory.get("crates", DEFAULT_CRATES)
     
-    # Convert beers to crates (round up to account for partial crates)
-    crates_to_subtract = (amount + BEERS_PER_CRATE - 1) // BEERS_PER_CRATE
+    # Calculate total beers available
+    total_beers = current_crates * BEERS_PER_CRATE
     
-    new_crates = max(0, current_crates - crates_to_subtract)  # Don't go below 0
+    # Subtract requested amount
+    new_total_beers = max(0, total_beers - amount)
+    
+    # Convert back to crates (floor division - only full crates remain)
+    new_crates = new_total_beers // BEERS_PER_CRATE
     
     inventory["crates"] = new_crates
     save_inventory(inventory)
+    
+    # Calculate how many crates were broken
+    crates_broken = current_crates - new_crates
+    
+    # Format message nicely
+    if new_crates > 0:
+        if crates_broken > 0:
+            message = f"Removed {amount} beers from {crates_broken} crate{'s' if crates_broken > 1 else ''}. {new_crates} crate{'s' if new_crates != 1 else ''} remaining."
+        else:
+            message = f"Removed {amount} beers. {new_crates} crate{'s' if new_crates != 1 else ''} remaining."
+    else:
+        message = f"Removed {amount} beers. Inventory is now empty."
     
     return {
         "success": True,
         "crates": new_crates,
         "beers_subtracted": amount,
-        "crates_subtracted": crates_to_subtract,
-        "message": f"Removed {amount} beers ({crates_to_subtract} crate(s)) from inventory. {new_crates} crate(s) remaining."
+        "message": message
     }
 
 

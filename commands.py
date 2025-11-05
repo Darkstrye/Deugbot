@@ -19,7 +19,10 @@ def parse_command(message: str) -> Optional[str]:
     # Check inventory commands
     if any(keyword in message_lower for keyword in ["check inventory", "how many", "inventory", "beers left", "beer count"]):
         crates = get_inventory()
-        return f"🍺 Current inventory: {crates} crate(s) of beer"
+        if crates > 0:
+            return f"🍺 Current inventory: {crates} crate{'s' if crates != 1 else ''}"
+        else:
+            return f"🍺 Current inventory: Empty"
     
     # Add beers to inventory commands
     add_patterns = [
