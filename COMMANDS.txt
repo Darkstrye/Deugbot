@@ -103,9 +103,9 @@ UNKNOWN COMMANDS
 If the bot doesn't recognize a command, it will respond with:
   "🤔 I didn't understand that command. Try:
    • 'commands' - See all available commands
-   • 'check inventory' - See current stock
-   • 'add X crates' - Add X crates to inventory
-   • 'subtract X crates' - Remove X crates from inventory"
+   • 'status' - Check current inventory
+   • 'add X crates' - Add crates to inventory
+   • 'subtract X crates' - Remove crates from inventory"
 
 
 TECHNICAL DETAILS

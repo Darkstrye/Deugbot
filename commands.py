@@ -92,7 +92,7 @@ def parse_command(message: str) -> Optional[str]:
             return result["message"]
     
     # Unknown command
-    return "🤔 I didn't understand that command. Try:\n• 'commands' - See all available commands\n• 'check inventory' - See current stock\n• 'add X crates' - Add X crates to inventory\n• 'subtract X crates' - Remove X crates from inventory"
+    return "🤔 I didn't understand that command. Try:\n• 'commands' - See all available commands\n• 'status' - Check current inventory\n• 'add X crates' - Add crates to inventory\n• 'subtract X crates' - Remove crates from inventory"
 
 
 def handle_message(message: str) -> str:
