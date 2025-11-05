@@ -54,6 +54,35 @@ def get_inventory() -> int:
     return inventory.get("crates", DEFAULT_CRATES)
 
 
+def add_crates(crates: int) -> Dict[str, any]:
+    """
+    Add crates directly to inventory.
+    
+    Args:
+        crates: Number of crates to add
+        
+    Returns:
+        Dictionary with success status, new crate count, and message
+    """
+    inventory = load_inventory()
+    current_crates = inventory.get("crates", DEFAULT_CRATES)
+    
+    new_crates = current_crates + crates
+    
+    inventory["crates"] = new_crates
+    save_inventory(inventory)
+    
+    # Format message nicely
+    message = f"Added {crates} crate{'s' if crates != 1 else ''} to inventory. Total: {new_crates} crate{'s' if new_crates != 1 else ''}."
+    
+    return {
+        "success": True,
+        "crates": new_crates,
+        "crates_added": crates,
+        "message": message
+    }
+
+
 def add_beers(amount: int) -> Dict[str, any]:
     """
     Add beers to inventory. Only adds full crates (24 beers = 1 crate).

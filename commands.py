@@ -1,6 +1,6 @@
 import re
 from typing import Optional
-from inventory import get_inventory, subtract_beers, add_beers
+from inventory import get_inventory, subtract_beers, add_beers, add_crates
 
 
 def parse_command(message: str) -> Optional[str]:
@@ -24,8 +24,29 @@ def parse_command(message: str) -> Optional[str]:
         else:
             return f"🍺 Current inventory: Empty"
     
-    # Add beers to inventory commands
-    add_patterns = [
+    # Add crates to inventory commands (primary)
+    add_crate_patterns = [
+        r"add\s+(\d+)\s+crates?",
+        r"added\s+(\d+)\s+crates?",
+        r"add\s+(\d+)\s+crates?\s+to\s+inventory",
+        r"added\s+(\d+)\s+crates?\s+to\s+inventory",
+        r"stock\s+(\d+)\s+crates?",
+        r"restock\s+(\d+)\s+crates?",
+        r"received\s+(\d+)\s+crates?",
+    ]
+    
+    for pattern in add_crate_patterns:
+        match = re.search(pattern, message_lower)
+        if match:
+            crates = int(match.group(1))
+            if crates <= 0:
+                return "❌ Please specify a positive number of crates."
+            
+            result = add_crates(crates)
+            return result["message"]
+    
+    # Add beers to inventory commands (alternative - converts to crates)
+    add_beer_patterns = [
         r"add\s+(\d+)\s+beers?",
         r"add\s+(\d+)\s+beers?\s+to\s+inventory",
         r"added\s+(\d+)\s+beers?\s+to\s+inventory",
@@ -34,7 +55,7 @@ def parse_command(message: str) -> Optional[str]:
         r"received\s+(\d+)\s+beers?",
     ]
     
-    for pattern in add_patterns:
+    for pattern in add_beer_patterns:
         match = re.search(pattern, message_lower)
         if match:
             amount = int(match.group(1))
@@ -65,7 +86,7 @@ def parse_command(message: str) -> Optional[str]:
             return result["message"]
     
     # Unknown command
-    return "🤔 I didn't understand that command. Try:\n• 'check inventory' - See current stock\n• 'add X beers' - Add X beers to inventory\n• 'added X beers' - Remove X beers when added to fridge"
+    return "🤔 I didn't understand that command. Try:\n• 'check inventory' - See current stock\n• 'add X crates' - Add X crates to inventory\n• 'added X beers' - Remove X beers when added to fridge"
 
 
 def handle_message(message: str) -> str:
