@@ -73,7 +73,7 @@ def add_crates(crates: int) -> Dict[str, any]:
     save_inventory(inventory)
     
     # Format message nicely
-    message = f"Added {crates} crate{'s' if crates != 1 else ''} to inventory. Total: {new_crates} crate{'s' if new_crates != 1 else ''}."
+    message = f"{crates} krat{'ten' if crates != 1 else ''} toegevoegd aan voorraad. Totaal: {new_crates} krat{'ten' if new_crates != 1 else ''}."
     
     return {
         "success": True,
@@ -103,9 +103,9 @@ def subtract_crates(crates: int) -> Dict[str, any]:
     
     # Format message nicely
     if new_crates > 0:
-        message = f"Removed {crates} crate{'s' if crates != 1 else ''} from inventory. {new_crates} crate{'s' if new_crates != 1 else ''} remaining."
+        message = f"{crates} krat{'ten' if crates != 1 else ''} verwijderd uit voorraad. {new_crates} krat{'ten' if new_crates != 1 else ''} over."
     else:
-        message = f"Removed {crates} crate{'s' if crates != 1 else ''} from inventory. Inventory is now empty."
+        message = f"{crates} krat{'ten' if crates != 1 else ''} verwijderd uit voorraad. Voorraad is nu leeg."
     
     return {
         "success": True,

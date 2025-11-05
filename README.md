@@ -1,13 +1,16 @@
-# WhatsApp Beer Inventory Bot
+# Beer Inventory Bot (WhatsApp + Telegram)
 
-A simple WhatsApp bot for managing beer crate inventory for a student bar. Built with Twilio WhatsApp API and FastAPI.
+A dual-platform bot for managing beer crate inventory for a student bar. Works on both WhatsApp (via Twilio) and Telegram, sharing the same inventory data.
 
 ## Features
 
-- Check current inventory via WhatsApp
-- Subtract beers from inventory when added to fridge
-- Simple JSON-based storage (no database needed)
-- Crate-based inventory management
+- ✅ Dual-platform support: WhatsApp and Telegram
+- ✅ Check current inventory
+- ✅ Add/subtract crates from inventory
+- ✅ Group chat support on Telegram (for visibility)
+- ✅ Shared inventory data between both platforms
+- ✅ Simple JSON-based storage (no database needed)
+- ✅ Crate-based inventory management
 
 ## Setup Instructions
 
@@ -33,22 +36,36 @@ pip install -r requirements.txt
    - Auth Token
    - WhatsApp sandbox number (usually `whatsapp:+14155238886`)
 
-### 4. Configure Environment Variables
+### 4. Telegram Bot Setup
 
-1. Copy `.env.example` to `.env`:
-   ```bash
-   cp .env.example .env
-   ```
+1. Create a Telegram bot:
+   - Open Telegram and search for `@BotFather`
+   - Send `/newbot` and follow the instructions
+   - Save the bot token you receive
 
-2. Edit `.env` and add your Twilio credentials:
+2. Add bot to your group:
+   - Create a Telegram group (or use existing)
+   - Add your bot to the group: Search for `@Deugnietbot` and add it
+   - **Important**: Give bot admin permissions (required for group chat)
+     - Go to group settings → Administrators → Add Admin → Select your bot
+
+### 5. Configure Environment Variables
+
+1. Edit your `.env` file and add your credentials:
    ```
+   # Twilio (WhatsApp)
    TWILIO_ACCOUNT_SID=your_account_sid_here
    TWILIO_AUTH_TOKEN=your_auth_token_here
    TWILIO_WHATSAPP_NUMBER=whatsapp:+14155238886
+   
+   # Telegram
+   TELEGRAM_BOT_TOKEN=your_telegram_bot_token_here
+   
+   # Inventory
    DEFAULT_CRATES=50
    ```
 
-### 5. Expose Local Server (for Development)
+### 6. Expose Local Server (for Development - WhatsApp only)
 
 1. Install ngrok: https://ngrok.com/download
 2. Start the FastAPI server (see next step)
@@ -58,35 +75,56 @@ pip install -r requirements.txt
    ```
 4. Copy the HTTPS URL (e.g., `https://abc123.ngrok.io`)
 
-### 6. Configure Twilio Webhook
+### 7. Configure Twilio Webhook
 
 1. In Twilio Console, go to **Messaging** → **Settings** → **WhatsApp Sandbox Settings**
 2. Set **WHEN A MESSAGE COMES IN** to: `https://your-ngrok-url.ngrok.io/message`
 3. Save the configuration
 
-### 7. Run the Application
+### 8. Run the Bots
 
+**Terminal 1 - WhatsApp Bot (FastAPI):**
 ```bash
 uvicorn main:app --reload
 ```
 
-The server will start on `http://localhost:8000`
+**Terminal 2 - Telegram Bot:**
+```bash
+python telegram_bot.py
+```
 
-### 8. Test the Bot
+Both bots will run simultaneously and share the same inventory data.
 
-1. Send a WhatsApp message to your Twilio sandbox number
-2. Try commands like:
-   - "check inventory"
-   - "how many beers"
-   - "added 4 beers"
-   - "add 10 beers"
+### 9. Test the Bots
+
+**WhatsApp:**
+- Send a message to your Twilio sandbox number
+- Try: "status", "add 2 crates", "subtract 1 crate"
+
+**Telegram:**
+- Add bot to a group or message it directly
+- Try: "status", "add 2 crates", "subtract 1 crate"
+- Or use commands: `/status`, `/commands`
 
 ## Usage
 
-Send WhatsApp messages to the bot with natural language commands:
+### Commands (Work on both WhatsApp and Telegram):
 
-- **Check inventory**: "check inventory", "how many beers", "inventory"
-- **Subtract beers**: "added 4 beers", "add 10 beers", "added 2 beers to fridge"
+- **Check inventory**: "status", "check inventory", "how many"
+- **Add crates**: "add X crates", "add 2 crates"
+- **Subtract crates**: "subtract X crates", "remove 1 crate"
+- **Help**: "commands", "help"
+
+### Telegram-specific commands:
+- `/start` - Welcome message
+- `/status` - Check inventory
+- `/commands` - List all commands
+
+### Group Chat Benefits (Telegram):
+- ✅ Everyone sees updates in real-time
+- ✅ Visible history of who did what
+- ✅ Better accountability
+- ✅ No 72-hour sandbox limit
 
 ## Inventory Storage
 

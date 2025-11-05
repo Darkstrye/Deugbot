@@ -17,38 +17,34 @@ def parse_command(message: str) -> Optional[str]:
     message_lower = message.lower().strip()
     
     # Commands list command
-    if message_lower in ["commands", "help", "list commands", "what can you do"]:
-        return """📋 Available Commands:
+    if message_lower in ["commands", "help", "list commands", "what can you do", "commando's", "hulp"]:
+        return """📋 Beschikbare Commando's:
 
-1️⃣ CHECK INVENTORY / STATUS
-   • "check inventory"
+1️⃣ VOORRAAD CONTROLEREN / STATUS
    • "status"
-   • "how many"
-   • "inventory"
-   • "beers left"
-   • "beer count"
+   • "voorraad"
+   • "hoeveel"
+   • "check voorraad"
 
-2️⃣ ADD CRATES
-   • "add X crates" (e.g., "add 2 crates")
-   • "added X crates"
-   • "stock X crates"
-   • "restock X crates"
+2️⃣ KRATEN TOEVOEGEN
+   • "voeg X kratten toe" (bijv. "voeg 2 kratten toe")
+   • "toegevoegd X kratten"
+   • "voorraad X kratten"
 
-3️⃣ SUBTRACT CRATES
-   • "subtract X crates"
-   • "removed X crates"
-   • "take X crates"
-   • "remove X crates"
+3️⃣ KRATEN VERWIJDEREN
+   • "verwijder X kratten"
+   • "weggehaald X kratten"
+   • "haal X kratten weg"
 
-💡 All operations work with full crates!"""
+💡 Alle bewerkingen werken met volledige kratten!"""
     
     # Check inventory commands
-    if any(keyword in message_lower for keyword in ["check inventory", "how many", "inventory", "beers left", "beer count", "status"]):
+    if any(keyword in message_lower for keyword in ["check inventory", "how many", "inventory", "beers left", "beer count", "status", "voorraad", "hoeveel", "check voorraad"]):
         crates = get_inventory()
         if crates > 0:
-            return f"🍺 Current inventory: {crates} crate{'s' if crates != 1 else ''}"
+            return f"🍺 Huidige voorraad: {crates} krat{'ten' if crates != 1 else ''}"
         else:
-            return f"🍺 Current inventory: Empty"
+            return f"🍺 Huidige voorraad: Leeg"
     
     # Add crates to inventory commands
     add_crate_patterns = [
@@ -59,6 +55,10 @@ def parse_command(message: str) -> Optional[str]:
         r"stock\s+(\d+)\s+crates?",
         r"restock\s+(\d+)\s+crates?",
         r"received\s+(\d+)\s+crates?",
+        r"voeg\s+(\d+)\s+kratten?\s+toe",
+        r"toegevoegd\s+(\d+)\s+kratten?",
+        r"voorraad\s+(\d+)\s+kratten?",
+        r"ontvangen\s+(\d+)\s+kratten?",
     ]
     
     for pattern in add_crate_patterns:
@@ -66,7 +66,7 @@ def parse_command(message: str) -> Optional[str]:
         if match:
             crates = int(match.group(1))
             if crates <= 0:
-                return "❌ Please specify a positive number of crates."
+                return "❌ Geef een positief aantal kratten op."
             
             result = add_crates(crates)
             return result["message"]
@@ -79,6 +79,10 @@ def parse_command(message: str) -> Optional[str]:
         r"remove\s+(\d+)\s+crates?",
         r"subtract\s+(\d+)\s+crates?\s+from\s+inventory",
         r"removed\s+(\d+)\s+crates?\s+from\s+inventory",
+        r"verwijder\s+(\d+)\s+kratten?",
+        r"weggehaald\s+(\d+)\s+kratten?",
+        r"haal\s+(\d+)\s+kratten?\s+weg",
+        r"eruit\s+(\d+)\s+kratten?",
     ]
     
     for pattern in subtract_patterns:
@@ -86,13 +90,13 @@ def parse_command(message: str) -> Optional[str]:
         if match:
             crates = int(match.group(1))
             if crates <= 0:
-                return "❌ Please specify a positive number of crates."
+                return "❌ Geef een positief aantal kratten op."
             
             result = subtract_crates(crates)
             return result["message"]
     
     # Unknown command
-    return "🤔 I didn't understand that command. Try:\n• 'commands' - See all available commands\n• 'status' - Check current inventory\n• 'add X crates' - Add crates to inventory\n• 'subtract X crates' - Remove crates from inventory"
+    return "🤔 Ik begrijp dat commando niet. Probeer:\n• 'commando's' - Zie alle beschikbare commando's\n• 'status' - Controleer huidige voorraad\n• 'voeg X kratten toe' - Voeg kratten toe aan voorraad\n• 'verwijder X kratten' - Verwijder kratten uit voorraad"
 
 
 def handle_message(message: str) -> str:
@@ -106,6 +110,6 @@ def handle_message(message: str) -> str:
         Response message string
     """
     response = parse_command(message)
-    return response if response else "Sorry, I didn't understand that command."
+    return response if response else "Sorry, ik begrijp dat commando niet."
 
 
