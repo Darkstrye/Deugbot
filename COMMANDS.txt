@@ -26,6 +26,7 @@ Function: Displays the current number of beer crates in inventory
 
 Accepted Phrases:
   - "check inventory"
+  - "status"
   - "how many" (e.g., "how many beers", "how many beers left")
   - "inventory"
   - "beers left"
@@ -33,6 +34,9 @@ Accepted Phrases:
 
 Example Usage:
   User: check inventory
+  Bot: 🍺 Current inventory: 50 crates
+
+  User: status
   Bot: 🍺 Current inventory: 50 crates
 
 Response Format:

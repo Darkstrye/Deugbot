@@ -20,8 +20,9 @@ def parse_command(message: str) -> Optional[str]:
     if message_lower in ["commands", "help", "list commands", "what can you do"]:
         return """📋 Available Commands:
 
-1️⃣ CHECK INVENTORY
+1️⃣ CHECK INVENTORY / STATUS
    • "check inventory"
+   • "status"
    • "how many"
    • "inventory"
    • "beers left"
@@ -42,7 +43,7 @@ def parse_command(message: str) -> Optional[str]:
 💡 All operations work with full crates!"""
     
     # Check inventory commands
-    if any(keyword in message_lower for keyword in ["check inventory", "how many", "inventory", "beers left", "beer count"]):
+    if any(keyword in message_lower for keyword in ["check inventory", "how many", "inventory", "beers left", "beer count", "status"]):
         crates = get_inventory()
         if crates > 0:
             return f"🍺 Current inventory: {crates} crate{'s' if crates != 1 else ''}"
